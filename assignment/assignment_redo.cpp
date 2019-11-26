@@ -80,29 +80,35 @@ int minDistance(int dist[], bool visited[]) {
 	return min_index;
 }
 
+// An implementation of Dijkstra's for shortest path
 void shortest_path_dijkstra(int g[V][V], int src, int dest) {
 	int dist[V];
 	int traversed[V];
 	bool visited[V];
 
+	// Initialise distances to all vertices as infinite, mark all vertices as not visited
 	for (int i = 0; i < V; i++) {
 		dist[i] = INT_MAX;
 		visited[i] = false;
 		traversed[i] = -1;
 	}
 
+	// Distance to source should be 0
 	dist[src] = 0;
 
+	// For each vertex, find shortest path to all other vertices
 	int count;
-	for (int i = 0; i < V - 1; i++) {
+	for (int i = 0; i < V; i++) {
 		int u = minDistance(dist, visited);
 		count = i;
 		if (u == dest) {
 			break;
 		}
 
+		// Mark the current vertex as visited
 		visited[u] = true;
 
+		// Update distances of the vertices adjacent to the current vertex
 		for (int v = 0; v < V; v++) {
 			if (!visited[v] && g[u][v] && dist[u] != INT_MAX && dist[u] + g[u][v] < dist[v]) {
 				dist[v] = dist[u] + g[u][v];
@@ -117,12 +123,6 @@ void shortest_path_dijkstra(int g[V][V], int src, int dest) {
 }
 
 void longest_path(int g[V][V], int src, int dest) {
-	for (int i = 0; i < V; i++) {
-		for (int j = 0; j < V; j++) {
-			g[i][j] *= -1;
-		}
-	}
-
 	shortest_path_dijkstra(g, src, dest);
 }
 
@@ -157,17 +157,25 @@ int main() {
 	{ 3, 0, 0, -2, 0 }
 	};
 
-	cout << "Q1. Shortest paths ======================================\n";
+	cout << "************************* Q1. Shortest paths **********************************\n\n";
 
 	shortest_path_dijkstra(g, 0, 2);	// a->e->d->c	or 0->4->3->2
 	shortest_path_dijkstra(g, 1, 4);	// b->a->e		or 1->0->4
 	shortest_path_dijkstra(g, 1, 3);	// b->a->e->d	or 1->0->4->3
 	shortest_path_dijkstra(g, 2, 4);	// c->d->e		or 2->3->4
 
-	cout << "Q2. Longest paths ========================================\n";
+	int negativeG[V][V] = {
+	{ 0, -6, 0, -7, -3 },
+	{ -6, 0, -8, 0, 0 },
+	{ 0, -8, 0, -6, 0 },
+	{ -7, 0, -6, 0, 2 },
+	{ -3, 0, 0, 2, 0 }
+	};
 
-	longest_path(g, 0, 2);	// a->b->c			or 0->1->2
-	longest_path(g, 1, 4);	// b->c->d->a->e	or 1->2->3->0->4 
-	longest_path(g, 1, 3);	// b->c->d			or 1->2->3
-	longest_path(g, 2, 4);	// c->b->a->e		or 2->1->0->4
+	cout << "************************* Q2. Longest paths *******************************\n\n";
+
+	longest_path(negativeG, 0, 2);	// a->b->c			or 0->1->2
+	longest_path(negativeG, 1, 4);	// b->c->d->a->e	or 1->2->3->0->4 
+	longest_path(negativeG, 1, 3);	// b->c->d			or 1->2->3
+	longest_path(negativeG, 2, 4);	// c->b->a->d->e	or 2->1->0->3->4
 }
